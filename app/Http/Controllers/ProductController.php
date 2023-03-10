@@ -38,8 +38,9 @@ class ProductController extends Controller
     {
         // validation request
         $request->validate([
-            'name' => 'required',
-            'detail' => 'required'
+            'name'      => 'required',
+            'detail'    => 'required',
+            'thumbnail' => 'required'
         ]);
 
         //save product
@@ -54,10 +55,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
         //
-        return Product::find($id);
+        // $id = intval($request['id']);
+        // return $request['id'];
+        return Product::where('id',$request['id'])->first();
+
     }
 
     /**
@@ -78,9 +82,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
+        $update = Product::find($request['id']);
+
+        $update->setData($request);
+        $update->save();
     }
 
     /**
@@ -92,5 +100,21 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
+        return Product::destroy($id);
     }
+
+
+    /**
+     * search the resource from storage.
+     *
+     * @param  str  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($name)
+    {
+        //
+        return Product::where('name', 'like','%'.$name.'%')
+        ->get();
+    }
+
 }
